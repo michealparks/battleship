@@ -21,7 +21,10 @@ export default [{
     PROD && terser()
   ]
 }, {
-  input: 'node_modules/@material/mwc-button/mwc-button.js',
+  input: [
+    'node_modules/@material/mwc-icon/mwc-icon.js',
+    'node_modules/@material/mwc-button/mwc-button.js'
+  ],
   output: {
     file: 'dist/mwc.js',
     format: 'esm'

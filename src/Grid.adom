@@ -9,13 +9,17 @@ tag Grid [
       display 'flex'
       width '1vw'
     ]
+
+    'mwc-button' [
+      // --mdc-theme-primary '#666' <- does not work
+    ]
   ]
 
   sb-grid [
     each (letter, i in letters) [
       sb-grid-column [
         each (x, i in letters) [
-          mwc-button outlined 'bob'
+          mwc-button icon='check'
         ]
       ]
     ]
