@@ -1,28 +1,32 @@
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-const grid = []
-const icons = ['close', 'check']
 
 --
 const handleClick = (e, i, j) => {
-  console.log(grid[i][j])
-  console.log(icons[grid[i][j]])
+  grid[i][j] ^= 1
 
-  e.target.textContent = icons[grid[i, j]]
+  const val = grid[i][j]
+  const { children } = e.target
+
+  children[val].style.display = 'none'
+  children[val ^ 1].style.display = ''
+
+  console.log(grid[i][j])
 }
 
-const createGrid = (grid, size) => {
+const createGrid = (size) => {
   return Array(size).fill(0).map(() => {
     return Array(size).fill(0)
   })
 }
 
-const setIcon = () => {
-  return ''
+const icons = ['close', 'check']
+const grid = createGrid(10)
+
+for (const icon of document.querySelectorAll('mwc-icon')) {
+  if (icon.innerHTML === 'check') {
+    icon.style.display = 'none'
+  }
 }
-
-grid = createGrid(grid, 10)
-
-
 --
 
 tag Grid [
@@ -45,7 +49,8 @@ tag Grid [
       sb-grid-column [
         each (x, j in letters) [
           mwc-button on:click="handleClick($e, i, j)" [
-            mwc-icon "{{grid[i][j]}}"
+            mwc-icon "check"
+            mwc-icon "close"
           ]
         ]
       ]

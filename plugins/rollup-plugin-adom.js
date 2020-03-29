@@ -35,7 +35,7 @@ export default (config = {}) => {
   }
 
   return {
-    transform: () => {},
+    transform: (code) => { return '' },
     buildEnd: () => {}
   }
 }
