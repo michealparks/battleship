@@ -1,0 +1,27 @@
+--
+// inelegant, need a better way to import this
+window.store = {
+  _stores: {},
+  create: (id, initial) => {
+    const subscribers = []
+    let value = initial
+
+    window.store._stores[id] = {
+      set: (newValue) => {
+        value = newValue
+        for (const sub of subscribers) sub(value)
+      },
+      update: (fn) => {
+        value = fn(value)
+        for (const sub of subscribers) sub(value)
+      },
+      subscribe: (fn) => {
+        subscribers.push(fn)
+      }
+    }
+
+    return window.store._stores[id]
+  },
+  get: (id) => _stores[id]
+}
+--

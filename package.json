@@ -20,6 +20,7 @@
   "homepage": "https://github.com/michealparks/battleship#readme",
   "dependencies": {
     "@material/mwc-button": "^0.14.1",
+    "@material/mwc-fab": "^0.14.1",
     "@material/mwc-icon": "^0.14.1",
     "@rollup/plugin-multi-entry": "^3.0.0",
     "adom-js": "^0.16.10",

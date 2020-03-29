@@ -2,21 +2,25 @@ const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
 const icons = ['close', 'check']
 
 --
-const handleClick = ({ grid }, i, j) => {
-  grid[i][j] ^= 1
+const handleClick = ({ store, player }, i, j) => {
+  store.update((grid) => {
+    grid[i][j] = 0
+    return grid
+  })
 }
 --
 
 tag Grid [
-  var grid = [ repeat [ repeat 0 10 ] 10 ]
+  var store = props.store
+  var player = props.player
 
   css [
+    display 'block'
     background '#ccc'
-    width '100%'
+    padding "40px"
 
     'sb-grid-column' [
       display 'flex'
-      width '1vw'
     ]
 
     'mwc-button' [
@@ -25,14 +29,18 @@ tag Grid [
   ]
 
   sb-grid [
-    each (column, i in grid) [
+    each (column, i in props.grid) [
       sb-grid-column [
         each (point, j in column) [
           mwc-button on:click="handleClick(this, i, j)" [
-            if (point == 1) [
+            if (point == 2) [
+              mwc-icon "directions_boat"
+            ] else if (point == 1) [
               mwc-icon "check"
-            ] else [
+            ] else if (point == 0) [
               mwc-icon "close"
+            ] else [
+              mwc-icon "waves"
             ]
           ]
         ]

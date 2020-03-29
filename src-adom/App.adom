@@ -1,15 +1,101 @@
-import 'Grid.adom'
+import 'Consts.adom'
+import 'Document.adom'
 import 'Store.adom'
+import 'Grid.adom'
+import 'Placer.adom'
 
-html [
-  head [
-    link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet" []
-    link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet" []
-    script type="module" src="mwc.js" []
-  ]
+const ships = [
+  {
+    id: 'carrier',
+    count: 1,
+    size: 5
+  }, {
+    id: 'battleship',
+    count: 1,
+    size: 4
+  }, {
+    id: 'cruiser',
+    count: 1,
+    size: 3
+  }, {
+    id: 'destroyer',
+    count: 2,
+    size: 2
+  }, {
+    id: 'submarine',
+    count: 2,
+    size: 1
+  }
+]
+
+const boundaries = {
+  x: 10,
+  y: 10
+}
+
+const stores = {
+  p1: null,
+  p2: null
+}
+
+const grids = {
+  p1: [ repeat [ repeat -1 10 ] 10 ],
+  p2: [ repeat [ repeat -1 10 ] 10 ]
+}
+
+var stage = 'intro'
+var winningPlayer = 0
+var handlePlace = null
+var shipsToPlace = [ships[0]]
+
+--
+const btnWidth = 64
+const btnHeight = 36
+
+stores.p1 = window.store.create('gridPlayer1', grids.p1)
+stores.p2 = window.store.create('gridPlayer2', grids.p2)
+
+handlePlace = (x, y, size, orientation) => {
   
-  body root [
-    Grid []
-    Grid []
+}
+
+stores.p1.subscribe((grid) => {
+  grids.p1 = grid
+  $sync()
+})
+
+stores.p2.subscribe((grid) => {
+  grids.p2 = grid
+  $sync()
+})
+
+const init = () => {
+  shipsToPlace = [...ships]
+
+  for (const ship of shipsToPlace) {
+    ship.height = ship.size * window.BTN_HEIGHT
+    ship.width = ship.size * window.BTN_WIDTH
+    ship.orientation = 1
+  }
+
+  console.log(shipsToPlace[0])
+
+  stage = 'placement'
+  $sync()
+}
+
+init()
+--
+
+Document [
+  body style="margin: 0" root [
+    Grid grid={grids.p1} store={stores.p1} player={1} []
+    Grid grid={grids.p2} store={stores.p2} player={2} []
+    if (stage == 'placement') [
+      Placer
+        boundaries={boundaries}
+        ships={shipsToPlace}
+        handlePlace={handlePlace} []
+    ]
   ]
 ]

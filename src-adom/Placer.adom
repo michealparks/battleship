@@ -1,0 +1,86 @@
+--
+const handleMove = (pos, dx, dy, r) => {
+  console.log(window.BTN_WIDTH)
+  pos.x += (dx * window.BTN_WIDTH)
+  pos.y += (dy * window.BTN_HEIGHT)
+
+  if (r === 1) {
+    orientation ^= 1
+  }
+
+  $sync()
+}
+--
+
+tag Placer [
+  var handlePlace = props.handlePlace
+  var ships = props.ships
+  var boundaries = props.boundaries
+  var width = 64
+  var height = 36
+  var x = 0
+  var y = 0
+
+  css [
+    position 'absolute'
+    top '40px'
+    left '40px'
+    min-height '36px'
+    min-width '64px'
+
+    'mwc-fab' [
+      position 'absolute'
+    ]
+
+    '.left' [
+      left '-40px'
+      top 'calc(50% - 20px)'
+    ]
+
+    '.right' [
+      right '-40px'
+      top 'calc(50% - 20px)'
+    ]
+
+    '.down' [
+      bottom '-40px'
+      left 'calc(50% - 20px)'
+    ]
+
+    '.up' [
+      left 'calc(50% - 20px)'
+      top '-40px'
+    ]
+
+    '.rotate' [
+      left '-40px'
+      top '-40px'
+    ]
+
+    '.place' [
+      right '-40px'
+      top '-40px'
+    ]
+  ]
+
+  sb-placer style="transform: translate({{x}}px, {{y}}px); width: {{width}}px; height: {{height}}px" [
+    if (x != 0) [
+      mwc-fab.left on:click="handleMove(this, -1, 0)" mini icon='chevron_left' []
+    ]
+
+    mwc-fab.right on:click="handleMove(this, 1, 0)" mini icon='chevron_right' []
+    mwc-fab.down on:click="handleMove(this, 0, 1)" mini icon='expand_more' []
+
+    if (y != 0) [
+      mwc-fab.up on:click="handleMove(this, 0, -1)" mini icon='expand_less' []
+    ]
+
+    if (width != height) [
+      mwc-fab.rotate on:click="handleMove(this, 0, 0, 1)" mini icon='loop' []
+    ]
+
+    mwc-fab.place on:click="handlePlace(x, y)" mini icon='check' []
+  ]
+]
+
+export Placer

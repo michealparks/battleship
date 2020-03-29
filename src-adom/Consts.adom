@@ -1,0 +1,6 @@
+--
+// bad
+console.log('here')
+window.BTN_WIDTH = 64
+window.BTN_HEIGHT = 36
+--

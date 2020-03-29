@@ -27,7 +27,8 @@ export default [{
 }, {
   input: [
     'node_modules/@material/mwc-icon/mwc-icon.js',
-    'node_modules/@material/mwc-button/mwc-button.js'
+    'node_modules/@material/mwc-button/mwc-button.js',
+    'node_modules/@material/mwc-fab/mwc-fab.js'
   ],
   output: {
     file: 'dist/mwc.js',
