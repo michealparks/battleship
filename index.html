@@ -1,0 +1,311 @@
+<html><head><link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet"><script type="module" src="mwc.js"></script></head><script>window.onload = function () {
+  var $$adom_state = {"letters":["a","b","c","d","e","f","g","h","i","j"],"icons":["close","check"],"ships":[{"id":"carrier","count":1,"size":5},{"id":"battleship","count":1,"size":4},{"id":"cruiser","count":1,"size":3},{"id":"destroyer","count":2,"size":2},{"id":"submarine","count":2,"size":1}],"boundaries":{"x":10,"y":10},"stores":{"p1":null,"p2":null},"grids":{"p1":[[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]],"p2":[[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]]},"stage":"intro","winningPlayer":0,"handlePlace":null,"shipsToPlace":[{"id":"carrier","count":1,"size":5}]};
+  
+  var $$processed = [];
+  var $$firstSync = true;
+  var $$props = [];
+
+  function $$push_props (props) {
+    $$props.push(props);
+  }
+
+  function $$pop_props () {
+    $$props.pop();
+  }
+
+  function $$addEventListeners (node, events) {
+      var keys = Object.keys(events);
+      if (!node.__eventRefs) node.__eventRefs = {};
+      keys.forEach(function (event) {
+          if (node.__eventRefs[event]) {
+            node.removeEventListener(event, node.__eventRefs[event]);
+          }
+          node.addEventListener(event, events[event]);
+          node.__eventRefs[event] = events[event];
+      })
+  }
+
+  function $$if (cond, condIf, condElse) {
+      if (cond) condIf();
+      else if (condElse) condElse();
+  }
+
+  function $$each (list, fn) {
+      if (Array.isArray(list)) {
+          for (var i = 0; i < list.length; i++) {
+              fn(list[i], i);
+          }
+      } else if (typeof list === 'object') {
+          var keys = Object.keys(list);
+          for (var i = 0; i < keys.length; i++) {
+              fn(keys[i], list[keys[i]]);
+          }
+      } else {
+          throw new Error(list + ' is not iterable');
+      }
+  }
+
+  function $$clean (node) {
+      var num = $$processed[$$processed.length - 1];
+      while (node.childNodes[num]) {
+          var out = node.childNodes[num];
+          if (out.__adomState && out.__adomState.unmount) {
+            out.__adomState.unmount();
+          }
+          node.removeChild(out);
+      }
+  }
+
+  function $$create (type, props, events, state) {
+      var node;
+      if (type === 'text') node = document.createTextNode(props(state));
+      else {
+          node = document.createElement(type);
+          $$attr(node, props(state));
+      }
+      if (state) {
+        node.__adomState = state;
+        if (state.mount) {
+          state.mount();
+        }
+      }
+      if (events) $$addEventListeners(node, events);
+      return node;
+  }
+
+  function $$attr (node, props) {
+      Object.keys(props).forEach(function (p) {
+          var a = props[p];
+          if (p === 'events') return;
+          var v = (a && a.constructor === Array) ? a.join(' ') : a;
+          if (p in node) {
+              node[p] = v;
+          } else if (v === false || v == null) {
+              node.removeAttribute(at);
+          } else {
+              node.setAttribute(p, v);
+          }
+      });
+  }
+
+  function $$class (C, obj) {
+    if (!C) return obj;
+    var i = new C();
+    Object.keys(obj).forEach(function (k) {
+      i[k] = obj[k];
+    });
+    return i;
+  }
+
+  function $$e (par, type, props, events, state, children) {
+      var index = $$processed[$$processed.length - 1]++;
+      var node = par.childNodes[index];
+      if (!node) {
+          node = $$create(type, props, events, state);
+          par.appendChild(node);
+      } else if (type === 'text' && node.nodeType === Node.TEXT_NODE) {
+          node.nodeValue = props(node.__adomState || state);
+      } else if (node.tagName && (type === node.tagName.toLowerCase())) {
+          if (state && !node.__adomState) node.__adomState = state;
+          $$attr(node, props(node.__adomState));
+          if (events) $$addEventListeners(node, events);
+      } else {
+          var out = node;
+          node = $$create(type, props, events, state);
+          if (out.__adomState && out.__adomState.unmount) {
+            out.__adomState.unmount();
+          }
+          par.replaceChild(node, out);
+      }
+      if (children) {
+          $$processed.push(0);
+          children(node, node.__adomState || null);
+          $$clean(node);
+          $$processed.pop();
+      }
+  }
+  
+  (function (letters, icons, ships, boundaries, stores, grids, stage, winningPlayer, handlePlace, shipsToPlace) {
+  
+  function $sync() {
+      var par = window["adom-root-568"];
+      var $ = undefined;
+      //console.time('sync');
+      $$processed.push(0);
+      $$push_props({"grid": grids["p1"], "store": stores["p1"], "player": 1});
+    $$e(par, "sb-grid", function ($) { return (function (store,player) { return {"class": ["adom-c-0"]}; }).call($, $.store,$.player); }, null, $$class(typeof Grid === 'function' ? Grid : null, {"store": $$props[0]["store"], "player": $$props[0]["player"]}), function (par, $) { (function (store,player) {
+$$each($$props[0]["grid"], function (column, i) {
+            $$e(par, "sb-grid-column", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+$$each(column, function (point, j) {
+                    $$e(par, "mwc-button", function ($) { return (function () { return {}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (store,player) { handleClick(this, i, j); { store = $.store; player = $.player; }; $sync() }).call($) })($e.target.__adomState || $); }}, null, function (par) { (function () {
+                        $$if((point == 2), function () {
+                            $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                $$e(par, "text", function () { return "directions_boat"; })
+                            })(); });
+                        }, function () {
+                            $$if((point == 1), function () {
+                                $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                    $$e(par, "text", function () { return "check"; })
+                                })(); });
+                            }, function () {
+                                $$if((point == 0), function () {
+                                    $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                        $$e(par, "text", function () { return "close"; })
+                                    })(); });
+                                }, function () {
+                                    $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                        $$e(par, "text", function () { return "waves"; })
+                                    })(); });
+                                });
+                            });
+                        });
+                    })(); });
+});
+            })(); });
+});
+    })($.store,$.player); });
+    $$pop_props();
+    $$push_props({"grid": grids["p2"], "store": stores["p2"], "player": 2});
+    $$e(par, "sb-grid", function ($) { return (function (store,player) { return {"class": ["adom-c-0"]}; }).call($, $.store,$.player); }, null, $$class(typeof Grid === 'function' ? Grid : null, {"store": $$props[0]["store"], "player": $$props[0]["player"]}), function (par, $) { (function (store,player) {
+$$each($$props[0]["grid"], function (column, i) {
+            $$e(par, "sb-grid-column", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+$$each(column, function (point, j) {
+                    $$e(par, "mwc-button", function ($) { return (function () { return {}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (store,player) { handleClick(this, i, j); { store = $.store; player = $.player; }; $sync() }).call($) })($e.target.__adomState || $); }}, null, function (par) { (function () {
+                        $$if((point == 2), function () {
+                            $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                $$e(par, "text", function () { return "directions_boat"; })
+                            })(); });
+                        }, function () {
+                            $$if((point == 1), function () {
+                                $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                    $$e(par, "text", function () { return "check"; })
+                                })(); });
+                            }, function () {
+                                $$if((point == 0), function () {
+                                    $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                        $$e(par, "text", function () { return "close"; })
+                                    })(); });
+                                }, function () {
+                                    $$e(par, "mwc-icon", function ($) { return (function () { return {}; }).call($, ); }, null, null, function (par) { (function () {
+                                        $$e(par, "text", function () { return "waves"; })
+                                    })(); });
+                                });
+                            });
+                        });
+                    })(); });
+});
+            })(); });
+});
+    })($.store,$.player); });
+    $$pop_props();
+    $$if((stage == "placement"), function () {
+        $$push_props({"boundaries": boundaries, "ships": shipsToPlace, "handlePlace": handlePlace});
+        $$e(par, "sb-placer", function ($) { return (function (handlePlace,ships,boundaries,width,height,x,y) { return {"style": "transform: translate(" + x + "px, " + y + "px); width: " + width + "px; height: " + height + "px", "class": ["adom-c-1"]}; }).call($, $.handlePlace,$.ships,$.boundaries,$.width,$.height,$.x,$.y); }, null, $$class(typeof Placer === 'function' ? Placer : null, {"handlePlace": $$props[0]["handlePlace"], "ships": $$props[0]["ships"], "boundaries": $$props[0]["boundaries"], "width": 64, "height": 36, "x": 0, "y": 0}), function (par, $) { (function (handlePlace,ships,boundaries,width,height,x,y) {
+            $$if((x != 0), function () {
+                $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "chevron_left", "class": ["left"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handleMove(this, -1, 0); { handlePlace = $.handlePlace; ships = $.ships; boundaries = $.boundaries; width = $.width; height = $.height; x = $.x; y = $.y; }; $sync() }).call($) })($e.target.__adomState || $); }}, null);
+            });
+            $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "chevron_right", "class": ["right"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handleMove(this, 1, 0); { handlePlace = $.handlePlace; ships = $.ships; boundaries = $.boundaries; width = $.width; height = $.height; x = $.x; y = $.y; }; $sync() }).call($) })($e.target.__adomState || $); }}, null);
+            $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "expand_more", "class": ["down"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handleMove(this, 0, 1); { handlePlace = $.handlePlace; ships = $.ships; boundaries = $.boundaries; width = $.width; height = $.height; x = $.x; y = $.y; }; $sync() }).call($) })($e.target.__adomState || $); }}, null);
+            $$if((y != 0), function () {
+                $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "expand_less", "class": ["up"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handleMove(this, 0, -1); { handlePlace = $.handlePlace; ships = $.ships; boundaries = $.boundaries; width = $.width; height = $.height; x = $.x; y = $.y; }; $sync() }).call($) })($e.target.__adomState || $); }}, null);
+            });
+            $$if((width != height), function () {
+                $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "loop", "class": ["rotate"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handleMove(this, 0, 0, 1); { handlePlace = $.handlePlace; ships = $.ships; boundaries = $.boundaries; width = $.width; height = $.height; x = $.x; y = $.y; }; $sync() }).call($) })($e.target.__adomState || $); }}, null);
+            });
+            $$e(par, "mwc-fab", function ($) { return (function () { return {"mini": true, "icon": "check", "class": ["place"]}; }).call($, ); }, {"click": function ($e) { (function ($) { (function (handlePlace,ships,boundaries,width,height,x,y) { handlePlace(x, y); { $.handlePlace = handlePlace; $.ships = ships; $.boundaries = boundaries; $.width = width; $.height = height; $.x = x; $.y = y; }; $sync() }).call($, $.handlePlace,$.ships,$.boundaries,$.width,$.height,$.x,$.y) })($e.target.__adomState || $); }}, null);
+        })($.handlePlace,$.ships,$.boundaries,$.width,$.height,$.x,$.y); });
+        $$pop_props();
+    });
+      $$clean(par);
+      $$processed.pop();
+      //console.timeEnd('sync');
+      $$firstSync = false;
+   }
+      
+
+// bad
+console.log('here')
+window.BTN_WIDTH = 64
+window.BTN_HEIGHT = 36
+// inelegant, need a better way to import this
+window.store = {
+  _stores: {},
+  create: (id, initial) => {
+    const subscribers = []
+    let value = initial
+
+    window.store._stores[id] = {
+      set: (newValue) => {
+        value = newValue
+        for (const sub of subscribers) sub(value)
+      },
+      update: (fn) => {
+        value = fn(value)
+        for (const sub of subscribers) sub(value)
+      },
+      subscribe: (fn) => {
+        subscribers.push(fn)
+      }
+    }
+
+    return window.store._stores[id]
+  },
+  get: (id) => _stores[id]
+}
+const handleClick = ({ store, player }, i, j) => {
+  store.update((grid) => {
+    grid[i][j] = 0
+    return grid
+  })
+}
+const handleMove = (pos, dx, dy, r) => {
+  console.log(window.BTN_WIDTH)
+  pos.x += (dx * window.BTN_WIDTH)
+  pos.y += (dy * window.BTN_HEIGHT)
+
+  if (r === 1) {
+    orientation ^= 1
+  }
+
+  $sync()
+}
+
+const btnWidth = 64
+const btnHeight = 36
+
+stores.p1 = window.store.create('gridPlayer1', grids.p1)
+stores.p2 = window.store.create('gridPlayer2', grids.p2)
+
+handlePlace = (x, y, size, orientation) => {
+  
+}
+
+stores.p1.subscribe((grid) => {
+  grids.p1 = grid
+  $sync()
+})
+
+stores.p2.subscribe((grid) => {
+  grids.p2 = grid
+  $sync()
+})
+
+const init = () => {
+  shipsToPlace = [...ships]
+
+  for (const ship of shipsToPlace) {
+    ship.height = ship.size * window.BTN_HEIGHT
+    ship.width = ship.size * window.BTN_WIDTH
+    ship.orientation = 1
+  }
+
+  console.log(shipsToPlace[0])
+
+  stage = 'placement'
+  $sync()
+}
+
+init()
+  $sync();
+})($$adom_state.letters, $$adom_state.icons, $$adom_state.ships, $$adom_state.boundaries, $$adom_state.stores, $$adom_state.grids, $$adom_state.stage, $$adom_state.winningPlayer, $$adom_state.handlePlace, $$adom_state.shipsToPlace)
+}</script><style>.adom-c-0 { display:block; background:#ccc; padding:40px;  } .adom-c-0 sb-grid-column { display:flex;  } .adom-c-0 mwc-button {  } .adom-c-1 { position:absolute; top:40px; left:40px; min-height:36px; min-width:64px; transition:300ms;  } .adom-c-1 mwc-fab { position:absolute;  } .adom-c-1 .left { left:-40px; top:calc(50% - 20px);  } .adom-c-1 .right { right:-40px; top:calc(50% - 20px);  } .adom-c-1 .down { bottom:-40px; left:calc(50% - 20px);  } .adom-c-1 .up { left:calc(50% - 20px); top:-40px;  } .adom-c-1 .rotate { left:-40px; top:-40px;  } .adom-c-1 .place { right:-40px; top:-40px;  } </style><body style="margin: 0" id="adom-root-568"><sb-grid class="adom-c-0"><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column></sb-grid><sb-grid class="adom-c-0"><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column><sb-grid-column><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button><mwc-button><mwc-icon>waves</mwc-icon></mwc-button></sb-grid-column></sb-grid></body></html>
