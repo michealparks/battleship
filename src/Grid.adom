@@ -19,7 +19,7 @@ tag Grid [
     each (letter, i in letters) [
       sb-grid-column [
         each (x, i in letters) [
-          mwc-button icon='check'
+          mwc-button icon='check' []
         ]
       ]
     ]
