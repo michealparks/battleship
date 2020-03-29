@@ -9,8 +9,6 @@ const handleClick = (e, i, j) => {
 
   children[val].style.display = 'none'
   children[val ^ 1].style.display = ''
-
-  console.log(grid[i][j])
 }
 
 const createGrid = (size) => {
