@@ -1,0 +1,43 @@
+const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+const grid = [ repeat [ repeat 0 10 ] 10 ]
+const icons = ['close', 'check']
+
+--
+const handleClick = (i, j) => {
+  grid[i][j] ^= 1
+}
+--
+
+tag Grid [
+  css [
+    background '#ccc'
+    width '100%'
+
+    'sb-grid-column' [
+      display 'flex'
+      width '1vw'
+    ]
+
+    'mwc-button' [
+      // --mdc-theme-primary '#666' <- does not work
+    ]
+  ]
+
+  sb-grid [
+    each (column, i in grid) [
+      sb-grid-column [
+        each (point, j in column) [
+          mwc-button on:click="handleClick(i, j)" [
+            if (point == 1) [
+              mwc-icon "check"
+            ] else [
+              mwc-icon "close"
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+]
+
+export Grid

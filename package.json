@@ -21,11 +21,13 @@
   "dependencies": {
     "@material/mwc-button": "^0.14.1",
     "@material/mwc-icon": "^0.14.1",
-    "adom-js": "^0.16.8",
+    "@rollup/plugin-multi-entry": "^3.0.0",
+    "adom-js": "^0.16.10",
     "chokidar": "^3.3.1",
     "rollup": "^2.2.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-svelte": "^5.1.1",
     "rollup-plugin-terser": "^5.3.0"
   }
 }

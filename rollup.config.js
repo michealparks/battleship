@@ -1,3 +1,4 @@
+import multi from '@rollup/plugin-multi-entry'
 import serve from 'rollup-plugin-serve'
 import adom from './plugins/rollup-plugin-adom'
 import resolve from 'rollup-plugin-node-resolve'
@@ -6,14 +7,17 @@ import { terser } from 'rollup-plugin-terser'
 const { DEV, PROD } = process.env
 
 export default [{
-  input: 'src/App.adom',
+  input: 'src-adom/App.adom',
   output: {
-    file: 'dist/app.js',
+    file: 'dist/app-adom.js',
     format: 'esm'
   },
   plugins: [
     resolve(),
-    adom({ cache: DEV }),
+    adom({
+      root: 'src-adom',
+      cache: DEV
+    }),
     DEV && serve({
       contentBase: 'dist',
       port: 42069
@@ -30,6 +34,7 @@ export default [{
     format: 'esm'
   },
   plugins: [
+    multi(),
     resolve(),
     PROD && terser()
   ]
