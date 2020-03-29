@@ -1,0 +1,25 @@
+const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+
+tag Grid [
+  css [
+    background '#ccc'
+    width '100%'
+
+    'sb-grid-column' [
+      display 'flex'
+      width '1vw'
+    ]
+  ]
+
+  sb-grid [
+    each (letter, i in letters) [
+      sb-grid-column [
+        each (x, i in letters) [
+          mwc-button outlined 'bob'
+        ]
+      ]
+    ]
+  ]
+]
+
+export Grid

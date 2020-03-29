@@ -14,7 +14,7 @@ export default [{
   plugins: [
     resolve(),
     adom({ cache: DEV }),
-    serve({
+    DEV && serve({
       contentBase: 'dist',
       port: 42069
     }),

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import Adom from 'adom-js'
+import chokidar from 'chokidar'
 
 export default (config = {}) => {
   const {
@@ -14,6 +15,17 @@ export default (config = {}) => {
     filters
   })
 
+  chokidar.watch('src').on('all', (event, path) => {
+    onChange()
+  })
+
+  const onChange = () => {
+    const [err, html] = tryCompile('App.adom')
+    if (err) return console.error(err)
+    fs.writeFileSync('dist/index.html', html, 'utf-8')
+    console.log('Compiled App.adom -> index.html')
+  }
+
   const tryCompile = (file) => {
     try {
       return [undefined, compiler.render(file)]
@@ -23,13 +35,7 @@ export default (config = {}) => {
   }
 
   return {
-    transform: (code) => {
-      return ''
-    },
-    buildEnd: () => {
-      const [err, html] = tryCompile('App.adom')
-      if (err) return console.error(err)
-      fs.writeFileSync('dist/index.html', html, 'utf-8')
-    }
+    transform: (code) => { return '' },
+    buildEnd: () => {}
   }
 }

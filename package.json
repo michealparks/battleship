@@ -21,6 +21,7 @@
   "dependencies": {
     "@material/mwc-button": "^0.14.1",
     "adom-js": "^0.16.8",
+    "chokidar": "^3.3.1",
     "rollup": "^2.2.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
