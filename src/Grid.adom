@@ -1,4 +1,29 @@
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+const grid = []
+const icons = ['close', 'check']
+
+--
+const handleClick = (e, i, j) => {
+  console.log(grid[i][j])
+  console.log(icons[grid[i][j]])
+
+  e.target.textContent = icons[grid[i, j]]
+}
+
+const createGrid = (grid, size) => {
+  return Array(size).fill(0).map(() => {
+    return Array(size).fill(0)
+  })
+}
+
+const setIcon = () => {
+  return ''
+}
+
+grid = createGrid(grid, 10)
+
+
+--
 
 tag Grid [
   css [
@@ -18,8 +43,10 @@ tag Grid [
   sb-grid [
     each (letter, i in letters) [
       sb-grid-column [
-        each (x, i in letters) [
-          mwc-button icon='check' []
+        each (x, j in letters) [
+          mwc-button on:click="handleClick($e, i, j)" [
+            mwc-icon "{{grid[i][j]}}"
+          ]
         ]
       ]
     ]
