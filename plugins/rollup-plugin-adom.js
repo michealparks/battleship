@@ -15,7 +15,7 @@ export default (config = {}) => {
     filters
   })
 
-  chokidar.watch('src').on('all', (event, path) => {
+  chokidar.watch('src-adom').on('all', (event, path) => {
     onChange()
   })
 

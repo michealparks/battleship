@@ -1,14 +1,15 @@
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-const grid = [ repeat [ repeat 0 10 ] 10 ]
 const icons = ['close', 'check']
 
 --
-const handleClick = (i, j) => {
+const handleClick = ({ grid }, i, j) => {
   grid[i][j] ^= 1
 }
 --
 
 tag Grid [
+  var grid = [ repeat [ repeat 0 10 ] 10 ]
+
   css [
     background '#ccc'
     width '100%'
@@ -27,7 +28,7 @@ tag Grid [
     each (column, i in grid) [
       sb-grid-column [
         each (point, j in column) [
-          mwc-button on:click="handleClick(i, j)" [
+          mwc-button on:click="handleClick(this, i, j)" [
             if (point == 1) [
               mwc-icon "check"
             ] else [
