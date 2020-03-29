@@ -10,6 +10,7 @@ const handleMove = (pos, dx, dy, r) => {
 
   $sync()
 }
+
 --
 
 tag Placer [
@@ -27,6 +28,7 @@ tag Placer [
     left '40px'
     min-height '36px'
     min-width '64px'
+    transition '300ms'
 
     'mwc-fab' [
       position 'absolute'
