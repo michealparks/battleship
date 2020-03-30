@@ -8,14 +8,21 @@ const handleClick = ({ store, player }, i, j) => {
     return grid
   })
 }
+class Grid {
+  mount () {
+    console.log(this.grid)
+  }
+}
 --
 
 tag Grid [
+  var grid = props.grid
   var store = props.store
   var player = props.player
 
   css [
-    display 'block'
+    position 'relative'
+    display 'inline-block'
     background '#ccc'
     padding "40px"
 
@@ -46,6 +53,8 @@ tag Grid [
         ]
       ]
     ]
+
+    yield
   ]
 ]
 

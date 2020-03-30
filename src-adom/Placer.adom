@@ -1,37 +1,127 @@
 --
-const handleMove = (pos, dx, dy, r) => {
-  console.log(window.BTN_WIDTH)
-  pos.x += (dx * window.BTN_WIDTH)
-  pos.y += (dy * window.BTN_HEIGHT)
-
-  if (r === 1) {
-    orientation ^= 1
+class Placer {
+  constructor (props) {
+    this.handleKey = this.handleKey.bind(this)
   }
 
-  $sync()
-}
+  mount () {
+    window.addEventListener('keydown', this.handleKey)
 
+    this.size = this.ships[0].size
+    this.height = this.ships[0].size * window.BTN_HEIGHT
+    this.width = window.BTN_WIDTH
+
+    console.log(this.width)
+  }
+
+  unmount () {
+    window.removeEventListener('keydown', this.handleKey)
+  }
+
+  setSize (size) {
+    this.size = size
+    $sync()
+  }
+
+  handleMove (dx, dy, r) {
+    if (dx === -1 && this.gridx === 0) return
+    if (dy === -1 && this.gridy === 0) return
+    if (dx === 1 && this.gridx > 8) return
+    if (dy === 1 && this.gridy > 8) return
+
+    this.gridx += dx
+    this.gridy += dy
+    this.x += (dx * window.BTN_WIDTH)
+    this.y += (dy * window.BTN_HEIGHT)
+
+    if (r === 1) {
+      this.vertical = !this.vertical
+    }
+  }
+
+  handleKey (e) {
+    switch (e.key.toLowerCase()) {
+      case ' ': case 'enter':
+        this.handlePlace()
+        return $sync()
+      case 'a': case 'arrowleft':
+        this.handleMove(-1, 0)
+        return $sync()
+      case 'd': case 'arrowright':
+        this.handleMove(1, 0)
+        return $sync()
+      case 's': case 'arrowdown':
+        this.handleMove(0, 1)
+        return $sync()
+      case 'w': case 'arrowup':
+        this.handleMove(0, -1)
+        return $sync()
+    }
+  }
+
+  handlePlace () {
+    const { gridx, gridy } = this
+    const { size } = this.ships.shift()
+    console.log(this.ships)
+
+    this.grid.update((grid) => {
+      let i = 0
+
+      while (i < size) {
+        if (this.vertical) {
+          grid[gridy + i][gridx] = 2
+        } else {
+          grid[gridy][gridx + i] = 2
+        }
+
+        i += 1
+      }
+
+      return grid
+    })
+
+    this.gridx = this.gridy = this.x = this.y = 0
+    this.setSize(this.ships[0].size)
+  }
+}
 --
 
 tag Placer [
-  var handlePlace = props.handlePlace
+  var grid = props.grid
   var ships = props.ships
-  var boundaries = props.boundaries
+  var vertical = true
   var width = 64
   var height = 36
+  var gridx = 0
+  var gridy = 0
   var x = 0
   var y = 0
 
   css [
     position 'absolute'
-    top '40px'
-    left '40px'
-    min-height '36px'
-    min-width '64px'
-    transition '300ms'
+    width '100%'
+    height '100%'
+    top '0'
+    left '0'
+
+    'sb-placer' [
+      position 'absolute'
+      display 'flex'
+      top '40px'
+      left '40px'
+      min-height '36px'
+      min-width '64px'
+      transition '50ms'
+      background '#ccc'
+    ]
+
+    'sb-placer.vertical' [
+      flex-direction 'column'
+    ]
 
     'mwc-fab' [
       position 'absolute'
+      transition '200ms'
     ]
 
     '.left' [
@@ -56,32 +146,62 @@ tag Placer [
 
     '.rotate' [
       left '-40px'
-      top '-40px'
+      top '-60px'
     ]
 
     '.place' [
       right '-40px'
-      top '-40px'
+      top '-60px'
     ]
   ]
 
-  sb-placer style="transform: translate({{x}}px, {{y}}px); width: {{width}}px; height: {{height}}px" [
-    if (x != 0) [
-      mwc-fab.left on:click="handleMove(this, -1, 0)" mini icon='chevron_left' []
+  sb-placer-container [
+    sb-placer
+      class='{{vertical ? "vertical" : ""}}'
+      style='transform: translate({{x}}px, {{y}}px); width: {{this.width}}px; height: {{this.height}}px'
+    [
+
+      mwc-fab.left
+        mini
+        icon='chevron_left'
+        style='transform: scale({{gridx == 0 ? 0 : 1}})'
+        on:click='this.handleMove(-1, 0)' []
+
+      mwc-fab.right
+        mini
+        icon='chevron_right'
+        style='transform: scale({{gridx < 9 ? 1 : 0}})'
+        on:click='this.handleMove(1, 0)' []
+
+      mwc-fab.down
+        mini
+        icon='expand_more'
+        style='transform: scale({{gridy < 9 ? 1 : 0}})'
+        on:click='this.handleMove(0, 1)' []
+
+      mwc-fab.up
+        mini
+        icon='expand_less'
+        style='transform: scale({{gridy == 0 ? 0 : 1}})'
+        on:click='this.handleMove(0, -1)' []
+
+      mwc-fab.rotate
+        mini
+        icon='loop'
+        style='transform: scale({{this.size == 1 ? 0 : 1}})'
+        on:click='this.handleMove(0, 0, 1)' []
+
+      mwc-fab.place
+        mini
+        icon='check'
+        on:click='this.handlePlace()'  []
+
+      each (i in [1, 2, 3, 4, 5]) [
+        mwc-button style="display: {{i > this.size ? 'none' : ''}}" [
+          mwc-icon "directions_boat"
+        ]
+      ]
     ]
-
-    mwc-fab.right on:click="handleMove(this, 1, 0)" mini icon='chevron_right' []
-    mwc-fab.down on:click="handleMove(this, 0, 1)" mini icon='expand_more' []
-
-    if (y != 0) [
-      mwc-fab.up on:click="handleMove(this, 0, -1)" mini icon='expand_less' []
-    ]
-
-    if (width != height) [
-      mwc-fab.rotate on:click="handleMove(this, 0, 0, 1)" mini icon='loop' []
-    ]
-
-    mwc-fab.place on:click="handlePlace(x, y)" mini icon='check' []
   ]
 ]
 

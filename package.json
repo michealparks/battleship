@@ -6,6 +6,7 @@
   "scripts": {
     "start": "rollup -c -w --environment DEV",
     "build": "rollup -c --environment PROD",
+    "publish": "node publish.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,6 +26,7 @@
     "@rollup/plugin-multi-entry": "^3.0.0",
     "adom-js": "^0.16.10",
     "chokidar": "^3.3.1",
+    "gh-pages": "^2.2.0",
     "rollup": "^2.2.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",

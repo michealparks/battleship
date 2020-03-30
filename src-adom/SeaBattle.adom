@@ -1,0 +1,126 @@
+import 'Grid.adom'
+import 'Placer.adom'
+import 'Message.adom'
+
+--
+class SeaBattle {
+  mount () {
+    this.ships = this.createShips()
+
+    this.grids = {
+      p1: this.createGrid(10),
+      p2: this.createGrid(10)
+    }
+  
+    this.stores = {
+      p1: store.create('gridP1', this.grids.p1),
+      p2: store.create('gridP2', this.grids.p2)
+    }
+
+    this.stores.p1.subscribe((grid) => {
+      this.handleGridChange('p1', grid)
+    })
+
+    this.stores.p2.subscribe((grid) => {
+      this.handleGridChange('p2', grid)
+    })
+
+    this.stage = 'placement_p1'
+  }
+
+  createGrid () {
+    return Array(10).fill(0).map(() => {
+      return Array(10).fill(-1)
+    })
+  }
+
+  createShips () {
+    const ships = [
+      { id: 'carrier', size: 5 },
+      { id: 'battleship', size: 4 },
+      { id: 'cruiser', size: 3 },
+      { id: 'destroyer', size: 2 },
+      { id: 'destroyer', size: 2 },
+      { id: 'submarine', size: 1 },
+      { id: 'submarine', size: 1 }
+    ]
+
+    for (const ship of ships) {
+      ship.height = ship.size * window.BTN_HEIGHT
+      ship.width = ship.size * window.BTN_WIDTH
+      ship.orientation = 1
+    }
+
+    return ships
+  }
+
+  handleGridChange (id, grid) {
+    this.grids[id] = grid
+
+    if (this.stage === 'placement_p1' && this.ships.length === 0) {
+      this.ships = this.createShips()
+      this.stage === 'placement_p2'
+    }
+
+    if (this.stage === 'placement_p2' && this.ships.length === 0) {
+      this.stage === 'game'
+    }
+
+    console.log(this.ships)
+    this.ships.shift()
+
+    $sync()
+  }
+}
+--
+
+tag SeaBattle [
+  var stage = 'intro'
+  var grids = {p1: {}, p2: {}}
+  var stores = {p1: {}, p2: {}}
+  var ships = [{}]
+
+  css [
+    display 'flex'
+    padding '20px'
+  ]
+
+  sb-main [
+    if (stage == 'placement_p1') [
+      Grid
+        grid={grids.p1}
+        store={stores.p1}
+        player={1}
+      [
+        Placer
+          ships={ships}
+          grid={stores.p1} []
+      ]
+
+      Message [
+        h1 'Player 1'
+        p 'Add your ships!'
+      ]
+    ] else if (stage == 'placement_p2') [
+      Grid
+        grid={grids.p2}
+        store={stores.p2}
+        player={2}
+      [
+        Placer
+          ships={ships}
+          grid={stores.p2} []
+      ]
+
+      Message [
+        h1 'Player 2'
+        p 'Add your ships!'
+      ]
+    ] else if (stage == 'game') [
+      Grid
+        grid={grids.p1}
+        store={stores.p1}
+        player={1} []
+    ]
+  ]
+]

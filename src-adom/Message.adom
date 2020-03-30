@@ -1,0 +1,14 @@
+tag Message [
+  css [
+    font-family 'Rock Salt'
+    padding '0 40px'
+
+    'h1, p' [
+      margin '0'
+    ]
+  ]
+
+  sb-message [
+    yield
+  ]
+]
