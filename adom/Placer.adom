@@ -10,8 +10,6 @@ class Placer {
     this.size = this.ships[0].size
     this.height = this.ships[0].size * window.BTN_HEIGHT
     this.width = window.BTN_WIDTH
-
-    console.log(this.width)
   }
 
   unmount () {

@@ -1,6 +1,3 @@
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-const icons = ['close', 'check']
-
 --
 const handleClick = ({ store, player }, i, j) => {
   store.update((grid) => {
